@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* CSS styles for the clickable text */
+        #runScriptLink {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            text-decoration: none; /* Remove underline */
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #trendsContainer {
+            margin-top: 20px;
+        }
+
+        #trendingTitle {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #jsonOutput {
+            font-family: monospace;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Clickable text link to run the script -->
+    <a id="runScriptLink" href="#">Click here to run the script</a>
+    
+    <h2 id="trendingTitle"></h2>
+    <div id="trendsContainer"></div>
+
+    
+    <pre id="jsonOutput"></pre>
+
+
+    <script>
+        document.getElementById('runScriptLink').addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior (page reload)
+
+            fetch('http://127.0.0.1:5000/hello/World')
+                .then(response => response.json())
+                .then(data => {
+                    const trendsContainer = document.getElementById('trendsContainer');
+                    trendsContainer.innerHTML = ''; // Clear previous content
+
+                    // Display trending topics in bullet format
+                    const trends = [data.trend1, data.trend2, data.trend3, data.trend4, data.trend5];
+                    for (const trend of trends) {
+                        if (trend) { // Check if trend exists before adding
+                            const listItem = document.createElement('li');
+                            listItem.textContent = trend;
+                            trendsContainer.appendChild(listItem);
+                        }
+                    }
+
+                    // Display the entire JSON data (properly formatted)
+                    const jsonOutput = document.getElementById('jsonOutput');
+                    jsonOutput.textContent = JSON.stringify(data, null, 2); // Indentation for readability
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    // Handle error gracefully, e.g., display an error message to the user
+                });
+        });
+    </script>
+</body>
+</html>
